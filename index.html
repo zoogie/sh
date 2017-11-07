@@ -1,0 +1,100 @@
+<html><head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>sighax - 3DS BootROM exploit</title>
+		    <style>
+.code {
+font-family: monospace;
+white-space: pre;
+}
+.buf {
+display: inline-block;
+border: 2px dashed #000;
+padding: 0px;
+margin: 0px;
+}
+#overlap {
+background-color: #36f;
+background-image: linear-gradient(45deg, #396 25%, transparent 25%, transparent 50%, #396 50%, #396 75%, transparent 75%, transparent);
+background-size: 50px 50px;
+}
+    </style>
+	</head>
+	
+	<body>
+	<b></b>
+	
+		<pre>			<center><h1>sighax</h1></center>
+			<b>
+				<center>sighax is a BootROM exploit (revealed at <a href="https://www.youtube.com/watch?v=8C5cn_Qj0G8">33c3</a>) for the Nintendo 3DS/2DS/New3DS.</center>
+				<center>It exploits a vulnerability in the RSA signature parser and allows you to run fake-signed firmware on any console.</center>
+			</b>
+		</pre>
+		
+		<pre><h2>sighax installer 0.2 (beta)</h2>
+	This will install sighax on your console, it is available in the <a href="sighax_installer.bin">FIRM format</a> and as <a href="arm9loaderhax.bin">arm9loaderhax payload</a>.
+	The firmware you want to install must be named "target_firm.bin" and you have to put it into the root of your SD card.
+	You need ARM9 code execution to run this, see below for details.
+	<b>Note: Unfortunately, you cannot install Luma 3DS directly, you have to install a chainloader for it (which will be your "target_firm.bin").</b>
+	<b>Warning: Do not install random firmware, otherwise you risk a brick!</b>
+	<b>Warning: Since this is a beta, a "hardmod" (physical NAND access) is highly recommended!</b>
+		</pre>
+		
+		<pre>			<h2>Upgrade from A9LH (arm9loaderhax)?</h2>
+	Get the latest version of the A9LH payload for "sighax installer" <a href="arm9loaderhax.bin">here</a>.
+	Simply copy the arm9loaderhax.bin file into the root of your SD card and follow the installer's on-screen instructions.
+	You can choose to uninstall A9LH once sighax was installed successfully. You don't need any old pre-A9LH backup files.
+		</pre>
+		
+		<pre>			<h2>Just want the signature?</h2>
+	If you are just interested in the magic 0x100 bytes, you can download the forged RSA signature <a href="sig.bin">here</a>.
+		</pre>
+
+	<br>
+	
+	<u>normal sig</u>
+    <div class="code">
+
+      <div class="buf">00<span style="background-color: #99f">01</span><span style="background-color: #ccf">ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffff00</span><span style="background-color: #f33">30</span><span style="background-color: #f99">31</span><span style="background-color: #280">30</span><span style="background-color: #6f3;">0d</span><span style="background-color: #cfb">06096086480165030402010500</span><span style="background-color: #bb0">04</span><span style="background-color: #ff0">20</span>
+<span style="background-color: #396">94f7aee58c67825cfb786db130c53961ab8141bac73ca021d9440ca51a16e643</span></div> [Correct hash]
+      <div class="buf" style="border-top-width: 0px;"><span style="background-color: #36f">94f7aee58c67825cfb786db130c53961ab8141bac73ca021d9440ca51a16e643</span></div> [Calculated hash]
+    </div>
+    <u>hax sig</u>
+    <div class="code">
+      <div class="buf">00<span style="background-color: #99f">02</span><span style="background-color: #ccf">d964f9e12652eb986ae5da2b55e654afb05a9d088adbd5a9b34d9406278f
+caa6143f01b86b81a4e3ab047a8655f3e3befea4fd87037fa45187ce909d991a
+b5a839e54e23f51d628d4c90b9995205e77183f850b24bd75cf304193cb6f8e1
+d107ce74a0f9bf097464d043cd190cc6f0eb8e8c70eb99e0b91fb359820fae21
+d5b9175eb93eb0c55562f74534b27b219df7e67b5f9d300667aeb500</span><span style="background-color: #f33">30</span><span style="background-color: #f99">30</span><span style="background-color: #280">30</span><span style="background-color: #6f3;">5e</span>
+<span style="background-color: #cfb">9bb35bd25b7d6918ae7e969cc933185f070534cdd345881827c36c0f65692e74
+1e6c8b93e2948d1d8a8b2648fe250e5a4ccf8f2137e94c39090bf51f4336aa1a
+2b8f4f2f881295179143b12cf11c1b8ed1533943beb191b792de265fa222</span><span style="background-color: #bb0">6a</span><span style="background-color: #ff0">2c</span></div>
+      <div class="buf" style="border-top-width: 0px;" id="overlap">????????????????????????????????????????????????????????????????</div> [Calculated and correct hash overlapping]
+    </div>
+    <div class="code">
+      <span style="background-color: #99f">Padding type:</span>       01=Only FF, 02=Anything goes
+      <span style="background-color: #ccf">Padding:</span>            Zero terminated
+      <span style="background-color: #f33">Outer block id:</span>     Must be 0x30
+      <span style="background-color: #f99">Outer block size:</span>   Ignored
+      <span style="background-color: #280">Inner block id:</span>     Must be 0x30
+      <span style="background-color: #6f3">Inner block size</span>
+      <span style="background-color: #cfb">Inner block data:</span>   Ignored
+      <span style="background-color: #bb0">SHA256 block id:</span>    Ignored
+      <span style="background-color: #ff0">SHA256 block size:</span>  Ignored
+      <span style="background-color: #396">SHA256 hash</span>
+    </div>
+	<pre>		<b><center>Disclaimer: No warranty implied. Use at your own risk.</center></b>
+	</pre>
+
+	<pre><b>
+		<center>Copyright (C) 2017 by derrek (<a href="https://twitter.com/derrekr6">@derrekr6</a>).</center>
+		</b><center><b>Thanks to plutoo (<a href="https://twitter.com/qlutoo">@qlutoo</a>), yellows8 (<a href="https://twitter.com/ylws8">@ylws8</a>), smea (<a href="https://twitter.com/smealum">@smealum</a>) and profi200. 
+		<center>Without these people this release would not have been possible &lt;3</center>	
+	</b></center></pre>
+</body></html>
